@@ -1,0 +1,33 @@
+version: '2'
+services:
+  ac:
+    image: ikasty/epcis-ac
+    links:
+      - ac_api
+    ports:
+      - 3000:3000
+      - 443:443
+
+  ac_api:
+    image: ikasty/epcis-ac-api
+    links:
+      - neo4j
+      - postgres
+    ports:
+      - 3001:3001
+
+  neo4j:
+    image: neo4j
+    volumes:
+      - ./neo4j:/data
+    environment:
+      NEO4J_AUTH: neo4j/password
+
+  postgres:
+    image: postgres:alpine
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: epcis_ac
